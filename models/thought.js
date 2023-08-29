@@ -5,11 +5,12 @@ const thoughtSchema = new Schema (
         thoughtText: {
             type: String,
             required: true,
-            // Validation - between 1 and 280 characters
+            min: [1],
+            max: [280]
         },
         createdAt: {
-            // built-in date method,
-            // default must be current timestamp
+            type: Date,
+            default: Date.now,
             // Use a getter method to format the timestamp on query
         },
         username: {
@@ -21,6 +22,10 @@ const thoughtSchema = new Schema (
         }
     }
 )
+
+const Thought = new model('thought', thoughtSchema);
+
+module.exports = Thought;
 
 // Schema Settings:
 

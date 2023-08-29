@@ -1,5 +1,4 @@
 const { Schema, model } = require('mongoose');
-const thoughtSchema = require('./thought');
 
 const userSchema = new Schema(
     {
@@ -7,18 +6,18 @@ const userSchema = new Schema(
             type: String,
             required: true,
             unique: true,
-            // trimmed
+            trim: true
         },
         email: {
             type: String,
             required: true,
             unique: true,
-            // must match valid email address - validation
+            match: [/\S+@\S+\.\S+/, 'Please enter a valid email address'],
         },
         thoughts: [{
-            // array of _id values referencing thought movel
+            // array of _id values referencing thought model
             type: Schema.Types.ObjectID,
-            ref: 'thought'
+            ref: 'Thought'
         }]
     }
 )

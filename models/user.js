@@ -1,47 +1,42 @@
-const { Schema, model } = require('mongoose');
-const thoughtSchema = require('./Thought');
+const { Schema, model } = require("mongoose");
 
 const userSchema = new Schema(
-    {
-        username: {
-            type: String,
-            required: true,
-            unique: true,
-            // trimmed
-        },
-        email: {
-            type: String,
-            required: true,
-            unique: true,
-            // must match valid email address - validation
-        },
-        thoughts: [{
-            // array of _id values referencing thought movel
-            type: Schema.Types.ObjectID,
-            ref: 'thought'
-        }]
-    }
-)
+  {
+    username: {
+      type: String,
+      unique: true,
+      required: true,
+      trim: true,
+    },
 
-const User = model('user', userSchema);
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      //email validation
+      match: [
+        /^([a-z0-9_\.-]+)@([\da-z\.-]+)\.([a-z\.]{2,6})$/,
+        `Please enter a valid email address`,
+      ],
+    },
+    // Array of _id values referencing the Thought model
+    thoughts: [{ type: Schema.Types.ObjectId, ref: "thought" }],
 
-module.exports = User
+    // Array of _id values referencing the User model (self-reference)
+    friends: [{ type: Schema.Types.ObjectId, ref: "user" }],
+  },
+  {
+    toJSON: {
+      virtuals: true,
+    },
+    id: false,
+  }
+);
 
-// schema settings: Create a virtual called `reactionCount` that retrieves the length of the thought's `reactions` array field on query.
+userSchema.virtual("friendCount").get(function () {
+  return this.friends.length;
+});
 
-// username:
-    // string
-    // unique
-    // required
-    // trimmed
+const User = model("user", userSchema);
 
-// email:
-    // string
-    // required
-    // unique
-    // must match valid emaila ddress. Mongoose validation
-
-// thoughts:
-    // array of _id values referencing thought model
-// friends:
-    // array of _id values referencing User model (self-reference)
+module.exports = User;

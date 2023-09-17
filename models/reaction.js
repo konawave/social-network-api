@@ -1,37 +1,34 @@
-// This will not be a model, but rather will be used as the `reaction` field's subdocument schema in the `Thought` model.
-
-const { Schema, model} = require('mongoose');
+const { Schema, Types } = require("mongoose");
+const formatDate = require("../utils/formatdate");
 
 const reactionSchema = new Schema(
-    {
-        reactionId: {
-            type: mongoose.Schema.Types.ObjectId,
-            default: function () {
-              return new mongoose.Types.ObjectId();
-            },
-        },
-        reactionBody: {
-            type: String,
-            required: true,
-            max: [280]
-        },
-        username: {
-            type: String,
-            required: true,
-            max: [280]
-        },
-        createdAt: {
-            type: Date,
-            default: Date.now
-            // Use getter method to format timestamp on query
-        }
-    }
-)
+  {
+    reactionId: {
+      type: Schema.Types.ObjectId,
+      default: () => new Types.ObjectId(),
+    },
+    reactionBody: {
+      type: String,
+      required: true,
+      maxLength: 280,
+    },
+    username: {
+      type: String,
+      required: true,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      //getter method to format the timestamp on query
+      get: (date) => formatDate(date),
+    },
+  },
+  {
+    toJSON: {
+      getters: true,
+    },
+    id: false,
+  }
+);
 
-const Reaction = new model('reaction', reactionSchema)
-
-module.exports = Reaction
-
-// **Schema Settings**:
-
-// This will not be a model, but rather will be used as the `reaction` field's subdocument schema in the `Thought` model.
+module.exports = reactionSchema;
